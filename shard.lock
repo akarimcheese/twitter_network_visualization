@@ -1,0 +1,22 @@
+version: 1.0
+shards:
+  crystweet:
+    github: akarimcheese/crystweet
+    commit: fd17c67e896e83b574cb94537eaf1a077af8e1f6
+
+  kemal:
+    github: kemalcr/kemal
+    version: 0.21.0
+
+  kilt:
+    github: jeromegn/kilt
+    version: 0.4.0
+
+  radix:
+    github: luislavena/radix
+    version: 0.3.8
+
+  twitter_networks:
+    github: akarimcheese/twitter_networks
+    commit: ff24483c6038cf97e089da91cf7ffaad597cedf8
+
