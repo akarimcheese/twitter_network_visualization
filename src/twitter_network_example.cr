@@ -85,7 +85,7 @@ module TwitterNetworkExample
     
     # Matches GET "http://host:port/"
     get "/" do
-      oauth_request = auth_client.oauth_request_token("https://crystal-akarimcheese.c9users.io/auth")
+      oauth_request = auth_client.oauth_request_token("#{ENV["HOSTNAME"]}/auth")
       render "views/index.ecr"
     end
     
