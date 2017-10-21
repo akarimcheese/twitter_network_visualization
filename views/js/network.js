@@ -1,5 +1,5 @@
 class Node {
-    constructor(name, svg) {
+    constructor(name, img, svg) {
         console.log("Adding node constructor: " + name);
         this.name = name;
         
@@ -10,13 +10,15 @@ class Node {
         this.yRaw = Math.random() * (svgHeight*0.8) + (svgHeight*0.1);
         console.log(`X: ${this.xRaw}, Y: ${this.yRaw}`);
         this.appearProgress = 0.0;
+        
         this.svg = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
+        this.fillSvg = document.createElementNS("http://www.w3.org/2000/svg", 'pattern');
         this.outerSvg = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
         
         this.appearStep = this.appearStep.bind(this);
         this.appear = this.appear.bind(this);
         
-        this.appear(svg);
+        this.appear(svg, img);
     }
     
     get x() {
@@ -32,15 +34,15 @@ class Node {
             this.appearProgress += 0.01;
             let y = this.appearProgress * (this.appearProgress - 2) * -1;
             
-            this.svg.setAttribute("r", y*25);
-            this.outerSvg.setAttribute("r", y*25);
+            this.svg.setAttribute("r", y*24);
+            this.outerSvg.setAttribute("r", y*24);
         } else if(this.appearProgress < 2) {
             this.appearProgress += 0.01;
 
             let y = (this.appearProgress - 1) * (this.appearProgress - 3) * -1;
             let width = (1 - y); 
             
-            this.outerSvg.setAttribute("r", 25 + y*10); 
+            this.outerSvg.setAttribute("r", 24 + y*10); 
             this.outerSvg.setAttribute("stroke-width", 5 * width);
         } else {
             svg.removeChild(this.outerSvg);
@@ -65,14 +67,32 @@ class Node {
         setTimeout(() => {this.appearStep(svg)}, 1);
     }
     
-    appear(svg) {
+    appear(svg, img) {
+        let defs = document.getElementsByTagNameNS("http://www.w3.org/2000/svg", "defs")[0];
+        
+        let patternName = `fill-${this.name}`
+        this.fillSvg.setAttribute("id", patternName);
+        this.fillSvg.setAttribute("patternUnits", "userSpaceOnUse");
+        this.fillSvg.setAttribute("width", 48);
+        this.fillSvg.setAttribute("height", 48);
+        
+        let imgSvg = document.createElementNS("http://www.w3.org/2000/svg", 'image');
+        imgSvg.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', img)
+        imgSvg.setAttribute("x", 0);
+        imgSvg.setAttribute("y", 0);
+        imgSvg.setAttribute("width", 48);
+        imgSvg.setAttribute("height", 48);
+        
+        this.fillSvg.appendChild(imgSvg);
+        defs.appendChild(this.fillSvg);
+        
         this.svg.setAttribute("id", this.name);
         this.svg.setAttribute("r", 0);
         this.svg.setAttribute("cx", this.x);
         this.svg.setAttribute("cy", this.y);
         this.svg.setAttribute("stroke", "#f0f8ff");
         this.svg.setAttribute("stroke-width", 2);
-        this.svg.style.fill = "#79cdcd";
+        this.svg.setAttribute("fill", `url(#${patternName})`);
         svg.appendChild(this.svg);
         
         this.outerSvg.setAttribute("id", this.name + "-outer");
@@ -207,9 +227,9 @@ class Graph {
         this.draw = this.draw.bind(this);
     }
     
-    addNode(name) {
+    addNode(name, img) {
         console.log("Adding node: " + name);
-        let node = new Node(name, this.svg);
+        let node = new Node(name, img, this.svg);
         this.nodes.set(name, node);
         this.edges.set(name, []);
     }
@@ -302,11 +322,14 @@ class Graph {
         for (const nodeEntry of this.nodes.entries()) {
           const node = nodeEntry[1];
           const svg = node.svg;
+          const fillSvg = node.fillSvg;
           
           if (svg == undefined) {
               continue;
           }
           
+          fillSvg.setAttribute("x", node.x-24);
+          fillSvg.setAttribute("y", node.y-24);
           svg.setAttribute("cx", node.x);
           svg.setAttribute("cy", node.y);
         }

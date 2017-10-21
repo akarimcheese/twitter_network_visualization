@@ -21,7 +21,7 @@ module TwitterNetworkExample
       
       private def receive_user(user)
         if socket = @socket
-          socket.send "{\"node\":#{user.screen_name.inspect}}"
+          socket.send "{\"node\":#{user.screen_name.inspect},\"img\":#{user.profile_image_url_https.inspect}}"
         end
       end
       
