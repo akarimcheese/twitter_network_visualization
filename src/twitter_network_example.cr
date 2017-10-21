@@ -119,5 +119,5 @@ module TwitterNetworkExample
       client.addSocket(socket)
     end
     
-    Kemal.run(8080)
+    Kemal.run(ENV["PORT"].to_i)
 end
