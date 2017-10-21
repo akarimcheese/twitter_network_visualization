@@ -13,7 +13,6 @@
    * Directed Edges
  * ~~Edge SVG Animation~~
  * ~~Clean up Surge SVG Animation~~
- * Group SVG Elements
  * ~~Twitter OAuth Signin~~
  * ~~Front Page~~
  * Fix capitalization issues
@@ -22,3 +21,7 @@
  * Factor out graph class
  * Better layout for network
  * Smoother animations
+
+## 10/21/2017
+ * ~~Group SVG Elements~~
+ * ~~Use Images~~

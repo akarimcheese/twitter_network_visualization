@@ -1,5 +1,5 @@
 class Node {
-    constructor(name, img, svg) {
+    constructor(name, img, svg, nodeSvg) {
         console.log("Adding node constructor: " + name);
         this.name = name;
         
@@ -18,7 +18,7 @@ class Node {
         this.appearStep = this.appearStep.bind(this);
         this.appear = this.appear.bind(this);
         
-        this.appear(svg, img);
+        this.appear(nodeSvg, img);
     }
     
     get x() {
@@ -109,7 +109,7 @@ class Node {
 }
 
 class Edge {
-    constructor(source, target, svg) {
+    constructor(source, target, svg, edgeSvg) {
         this.source = source;
         this.target = target;
         this.surgeSvg = { // TODO: DO THIS FOR ALL CLASSES
@@ -122,7 +122,7 @@ class Edge {
         this.surge = this.surge.bind(this);
         
         this.surgeProgress = 0.0;
-        this.surge(svg);
+        this.surge(edgeSvg);
     }
     
     surgeStep(sourceSvg, targetSvg, svg) {
@@ -228,16 +228,15 @@ class Graph {
     }
     
     addNode(name, img) {
-        console.log("Adding node: " + name);
-        let node = new Node(name, img, this.svg);
+        let nodeSvg = document.getElementById("nodes");
+        let node = new Node(name, img, this.svg, nodeSvg);
         this.nodes.set(name, node);
         this.edges.set(name, []);
     }
     
     addEdge(source, target) {
-        console.log(`Adding edge between ${source} and ${target}`);
-        console.log(`Edges: ${this.edges}`);
-        let edge = new Edge(source, target, this.svg);
+        let edgeSvg = document.getElementById("edges")
+        let edge = new Edge(source, target, this.svg, edgeSvg);
         this.edges.get(source).push(edge);
     }
     
