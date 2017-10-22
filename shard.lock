@@ -2,7 +2,7 @@ version: 1.0
 shards:
   crystweet:
     github: akarimcheese/crystweet
-    commit: fd17c67e896e83b574cb94537eaf1a077af8e1f6
+    commit: ff24b3e3b132c437fbbc097933fd668997a92aa5
 
   kemal:
     github: kemalcr/kemal

@@ -1,9 +1,38 @@
+function bezier(x1, y1, x2, y2) {
+    let diffx = x2-x1;
+    let diffy = y2-y1;
+    let distance = Math.sqrt(diffx*diffx + diffy*diffy);
+    
+    let unitx = 0;
+    let unity = 0;
+    
+    if (distance > 0) {
+        unitx = diffx/distance;
+        unity = diffy/distance;
+    }
+    
+    let theta1 = Math.PI * (75.0/180.0);
+    let theta2 = Math.PI * (105.0/180.0);
+  
+    let anchor1x = x1 + Math.cos(theta1)*unitx*15 - Math.sin(theta1)*unity*15;
+    let anchor1y = y1 + Math.sin(theta1)*unitx*15 + Math.cos(theta1)*unity*15;
+    let anchor2x = x2 + Math.cos(theta2)*unitx*15 - Math.sin(theta2)*unity*15;
+    let anchor2y = y2 + Math.sin(theta2)*unitx*15 + Math.cos(theta2)*unity*15;
+    
+    let coords1 = `${Math.round(x1)} ${Math.round(y1)}`;
+    let coords2 = `${Math.round(anchor1x)} ${Math.round(anchor1y)}`;
+    let coords3 = `${Math.round(anchor2x)} ${Math.round(anchor2y)}`;
+    let coords4 = `${Math.round(x2)} ${Math.round(y2)}`;
+    
+    return `M${coords1} C ${coords2}, ${coords3}, ${coords4}`
+}
+
 class Node {
     constructor(name, img, svg, nodeSvg) {
         console.log("Adding node constructor: " + name);
         this.name = name;
         
-        const svgWidth = svg.getBBox().width  ;
+        const svgWidth = svg.getBBox().width;
         const svgHeight = svg.getBBox().height;
         
         this.xRaw = Math.random() * (svgWidth*0.8) + (svgWidth*0.1);
@@ -31,7 +60,7 @@ class Node {
     
     appearStep(svg) {
         if (this.appearProgress < 1) {
-            this.appearProgress += 0.01;
+            this.appearProgress += 0.05;
             let y = this.appearProgress * (this.appearProgress - 2) * -1;
             
             this.svg.setAttribute("r", y*24);
@@ -112,11 +141,7 @@ class Edge {
     constructor(source, target, svg, edgeSvg) {
         this.source = source;
         this.target = target;
-        this.surgeSvg = { // TODO: DO THIS FOR ALL CLASSES
-            head: document.createElementNS("http://www.w3.org/2000/svg", 'circle'),
-            body: document.createElementNS("http://www.w3.org/2000/svg", 'line')
-        };
-        this.linkSvg = document.createElementNS("http://www.w3.org/2000/svg", 'line');
+        this.linkSvg = document.createElementNS("http://www.w3.org/2000/svg", 'path');
         
         this.surgeStep = this.surgeStep.bind(this);
         this.surge = this.surge.bind(this);
@@ -126,51 +151,18 @@ class Edge {
     }
     
     surgeStep(sourceSvg, targetSvg, svg) {
-        if (this.surgeProgress < 0.9) {
-            this.surgeProgress += 0.005;
-            
-            const x1 = parseInt(sourceSvg.getAttribute("cx"));
-            const y1 = parseInt(sourceSvg.getAttribute("cy"));
-            const x2 = parseInt(targetSvg.getAttribute("cx"));
-            const y2 = parseInt(targetSvg.getAttribute("cy"));
-            
-            const xdistance = x2 - x1;
-            const ydistance = y2 - y1;
-            
-            const xprogress = xdistance * this.surgeProgress;
-            const yprogress = ydistance * this.surgeProgress;
-            
-            const xlen = xdistance * 0.1;
-            const ylen = ydistance * 0.1;
-            
-            const surgeBody = this.surgeSvg.body;
-            surgeBody.setAttribute("x1", x1+xprogress);
-            surgeBody.setAttribute("y1", y1+yprogress);
-            surgeBody.setAttribute("x2", x1+xlen+xprogress);
-            surgeBody.setAttribute("y2", y1+ylen+yprogress);
-            surgeBody.setAttribute("stroke-width", (1 + this.surgeProgress*5));
-            
-            const surgeHead = this.surgeSvg.head;
-            surgeHead.setAttribute("cx", x1+xlen+xprogress);
-            surgeHead.setAttribute("cy", y1+ylen+yprogress);
-            surgeHead.setAttribute("r", (3 + this.surgeProgress*3));
+        if (this.surgeProgress < 1) {
+            this.surgeProgress += 0.01;
             
             // Link
+            const linkSvg = this.linkSvg;
+            linkSvg.setAttribute("stroke-dashoffset", `${(1-this.surgeProgress)*100}%`);
              
-             
-            setTimeout(() => { this.surgeStep(sourceSvg, targetSvg, svg); }, 1);
-        } else {
-            this.surgeProgress = 1;
-            svg.removeChild(this.surgeSvg.body);
-            svg.removeChild(this.surgeSvg.head);
-        }
+            setTimeout(() => { this.surgeStep(sourceSvg, targetSvg, svg); }, 5);
+        } 
     }
     
     surge(svg) {
-        this.appearing = true;
-        const surgeHead = this.surgeSvg.head;
-        const surgeBody = this.surgeSvg.body;
-        
         const sourceSvg = document.getElementById(this.source);
         const targetSvg = document.getElementById(this.target);
         
@@ -181,30 +173,18 @@ class Edge {
         
         const suffix = `${this.source}-${this.target}`;
         
-        surgeHead.setAttribute("id", `surgeHead-${suffix}`);
-        surgeHead.setAttribute("cx", x1);
-        surgeHead.setAttribute("cy", y1);
-        surgeHead.style.fill = "black";
-        svg.appendChild(surgeHead);
-        
-        surgeBody.setAttribute("id", `surgeBody-${suffix}`);
-        surgeBody.setAttribute("x1", x1);
-        surgeBody.setAttribute("y1", y1);
-        surgeBody.setAttribute("x2", x1);
-        surgeBody.setAttribute("y2", y1);
-        surgeBody.style.stroke = "black";
-        svg.appendChild(surgeBody);
-        
-        
         const linkSvg = this.linkSvg;
         var linkSvgName = `link-${suffix}`;
         linkSvg.setAttribute("id", linkSvgName);
         linkSvg.setAttribute("x1", x1);
         linkSvg.setAttribute("y1", y1);
-        linkSvg.setAttribute("x2", x1);
-        linkSvg.setAttribute("y2", y1);
+        linkSvg.setAttribute("x2", x2);
+        linkSvg.setAttribute("y2", y2);
         linkSvg.setAttribute("stroke", "black");
         linkSvg.setAttribute("stroke-width", "2");
+        linkSvg.setAttribute("fill", "transparent");
+        linkSvg.setAttribute("stroke-dasharray", "100% 100%");
+        linkSvg.setAttribute("stroke-dashoffset", "100%");
         svg.appendChild(linkSvg);
         
         this.surgeStep(sourceSvg, targetSvg, svg)
@@ -217,6 +197,9 @@ class Graph {
         this.edges = new Map();
         this.appearingNodes = [];
         this.svg = svg;
+        
+        this.width = svg.getBBox().width;
+        this.height = svg.getBBox().height;
         
         this.addNode = this.addNode.bind(this);
         this.addEdge = this.addEdge.bind(this);
@@ -248,12 +231,12 @@ class Graph {
         this.applyHookesLaw();
         this.applyCoulombsLaw();
         this.draw();
-        setTimeout(this.applyForces, 10);
+        setTimeout(this.applyForces, 25);
     }
     
     applyHookesLaw() {
-        const springConstant = 0.02;
-        const ideal = 100;
+        const springConstant = 0.01;
+        const ideal = this.width * (1.0/this.nodes.size);
         const epsilon = 0.5;
         
         for (const edgeEntry of this.edges.entries()) {
@@ -262,7 +245,7 @@ class Graph {
             const sourceEdges = edgeEntry[1];
             
             for (const edge of sourceEdges) {
-                if (edge.surgeProgress < 1) {
+                if (edge.surgeProgress < 0.75) {
                     continue;
                 }
                 
@@ -291,7 +274,7 @@ class Graph {
     }
     
     applyCoulombsLaw() {
-        const repulsionConstant = 2000.0;
+        const repulsionConstant = 50000.0;
         for (const nodeEntry of this.nodes.entries()) {
             const sourceNode = nodeEntry[1];
             
@@ -314,6 +297,17 @@ class Graph {
                 sourceNode.xRaw -= repulsion*unitx;
                 sourceNode.yRaw -= repulsion*unity;
             }
+            let deltax = 0 - sourceNode.xRaw;
+            let deltay = 0 - sourceNode.yRaw;
+              
+            sourceNode.xRaw += repulsionConstant/(deltax*deltax);
+            sourceNode.yRaw += repulsionConstant/(deltay*deltay);
+            
+            deltax = this.width - sourceNode.xRaw;
+            deltay = this.height - sourceNode.yRaw;
+              
+            sourceNode.xRaw -= repulsionConstant/(deltax*deltax);
+            sourceNode.yRaw -= repulsionConstant/(deltay*deltay);
         }
     }
     
@@ -343,18 +337,12 @@ class Graph {
                 const targetNode = this.nodes.get(targetName);
                 const linkSvg = edge.linkSvg;
                 
-                const xlength = targetNode.xRaw - sourceNode.xRaw;
-                const ylength = targetNode.yRaw - sourceNode.yRaw;
-                
                 const x1 = sourceNode.xRaw;
                 const y1 = sourceNode.yRaw;
-                const x2 = x1 + xlength * edge.surgeProgress;
-                const y2 = y1 + ylength * edge.surgeProgress;
+                const x2 = targetNode.xRaw;
+                const y2 = targetNode.yRaw;
                 
-                linkSvg.setAttribute("x1", Math.round(x1));
-                linkSvg.setAttribute("y1", Math.round(y1));
-                linkSvg.setAttribute("x2", Math.round(x2));
-                linkSvg.setAttribute("y2", Math.round(y2));
+                linkSvg.setAttribute("d", bezier(x1,y1,x2,y2));
             }
         }
     }

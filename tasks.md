@@ -10,7 +10,6 @@
 
 ## 10/20/2017
  * ~~Edge SVG Elements~~
-   * Directed Edges
  * ~~Edge SVG Animation~~
  * ~~Clean up Surge SVG Animation~~
  * ~~Twitter OAuth Signin~~
@@ -20,8 +19,14 @@
  * Different kind of visual graph structures (circles)
  * Factor out graph class
  * Better layout for network
- * Smoother animations
 
 ## 10/21/2017
  * ~~Group SVG Elements~~
  * ~~Use Images~~
+ * ~~Directed Edges~~
+ * On reload reprovide images
+ * On Highlight show name
+ * Display handle
+ * Smoother Animations 
+   * Don't do fancy animations when reloading
+ * ~~Add forces from walls~~
