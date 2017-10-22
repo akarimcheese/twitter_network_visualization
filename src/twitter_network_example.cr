@@ -38,8 +38,8 @@ module TwitterNetworkExample
       end
       
       def addSocket(socket)
-        @network.each_node do |node|
-          socket.send "{\"node\":#{node.inspect}}"
+        @network.each_user do |user|
+          socket.send "{\"node\":#{user.screen_name.inspect},\"img\":#{user.profile_image_url_https.inspect}}"
         end
       
         @network.each_edge do |source, target|

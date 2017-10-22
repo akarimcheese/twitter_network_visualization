@@ -18,5 +18,5 @@ shards:
 
   twitter_networks:
     github: akarimcheese/twitter_networks
-    commit: ff24483c6038cf97e089da91cf7ffaad597cedf8
+    commit: a0e92d912b7a75004deb5bf376f714d1b034cd5e
 

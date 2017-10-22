@@ -16,7 +16,7 @@
  * ~~Front Page~~
  * Fix capitalization issues
  * Configurable force directed graphs
- * Different kind of visual graph structures (circles)
+ * Different kind of visual graph structures
  * Factor out graph class
  * Better layout for network
 
@@ -25,13 +25,23 @@
  * ~~Use Images~~
  * ~~Directed Edges~~
  * ~~Arrows for direction~~
- * On reload reprovide images
  * On Highlight show name
- * Display handle
+ * ~~Display handle~~
+ * Message on Rate Limit
+ * Better UI
  * Smoother Animations 
    * Don't do fancy animations when reloading
- * ~~Add forces from walls~~
+ * Statistics
  * User highlight
    * Make bigger and highlight links
    * Show follow/follow back list
    * Fade background, other users
+
+## 10/22/2017
+ * ~~On reload reprovide images~~
+ * ~~Add forces from walls~~
+ * ~~Better Bezier Curves for Arrows~~
+ * ~~Circle Structure~~
+ * Handle duplicate names
+ * ~~Handle whitespace~~
+ * Delete Users
