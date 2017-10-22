@@ -24,9 +24,14 @@
  * ~~Group SVG Elements~~
  * ~~Use Images~~
  * ~~Directed Edges~~
+ * ~~Arrows for direction~~
  * On reload reprovide images
  * On Highlight show name
  * Display handle
  * Smoother Animations 
    * Don't do fancy animations when reloading
  * ~~Add forces from walls~~
+ * User highlight
+   * Make bigger and highlight links
+   * Show follow/follow back list
+   * Fade background, other users

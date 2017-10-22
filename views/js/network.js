@@ -1,3 +1,7 @@
+function textPath(x, y) {
+    return `M ${x-30} ${y} A ${30} ${30} 0 0 1 ${x+30} ${y}`
+}
+
 function bezier(x1, y1, x2, y2) {
     let diffx = x2-x1;
     let diffy = y2-y1;
@@ -11,18 +15,23 @@ function bezier(x1, y1, x2, y2) {
         unity = diffy/distance;
     }
     
-    let theta1 = Math.PI * (75.0/180.0);
-    let theta2 = Math.PI * (105.0/180.0);
+    let theta1 = Math.PI * (10.0/180.0);
+    let theta2 = Math.PI * (170.0/180.0);
   
-    let anchor1x = x1 + Math.cos(theta1)*unitx*15 - Math.sin(theta1)*unity*15;
-    let anchor1y = y1 + Math.sin(theta1)*unitx*15 + Math.cos(theta1)*unity*15;
-    let anchor2x = x2 + Math.cos(theta2)*unitx*15 - Math.sin(theta2)*unity*15;
-    let anchor2y = y2 + Math.sin(theta2)*unitx*15 + Math.cos(theta2)*unity*15;
+    let newx1 = x1 + Math.cos(theta1)*unitx*20 - Math.sin(theta1)*unity*20;
+    let newy1 = y1 + Math.sin(theta1)*unitx*20 + Math.cos(theta1)*unity*20;
+    let newx2 = x2 + Math.cos(theta2)*unitx*60 - Math.sin(theta2)*unity*60;
+    let newy2 = y2 + Math.sin(theta2)*unitx*60 + Math.cos(theta2)*unity*60;
     
-    let coords1 = `${Math.round(x1)} ${Math.round(y1)}`;
+    let anchor1x = newx1 + Math.cos(theta1)*unitx*50 - Math.sin(theta1)*unity*50;
+    let anchor1y = newy1 + Math.sin(theta1)*unitx*50 + Math.cos(theta1)*unity*50;
+    let anchor2x = newx2 + Math.cos(theta2)*unitx*50 - Math.sin(theta2)*unity*50;
+    let anchor2y = newy2 + Math.sin(theta2)*unitx*50 + Math.cos(theta2)*unity*50;
+
+    let coords1 = `${Math.round(newx1)} ${Math.round(newy1)}`;
     let coords2 = `${Math.round(anchor1x)} ${Math.round(anchor1y)}`;
     let coords3 = `${Math.round(anchor2x)} ${Math.round(anchor2y)}`;
-    let coords4 = `${Math.round(x2)} ${Math.round(y2)}`;
+    let coords4 = `${Math.round(newx2)} ${Math.round(newy2)}`;
     
     return `M${coords1} C ${coords2}, ${coords3}, ${coords4}`
 }
@@ -41,6 +50,7 @@ class Node {
         this.appearProgress = 0.0;
         
         this.svg = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
+        this.textPathSvg = document.createElementNS("http://www.w3.org/2000/svg", 'path');
         this.fillSvg = document.createElementNS("http://www.w3.org/2000/svg", 'pattern');
         this.outerSvg = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
         
@@ -133,6 +143,23 @@ class Node {
         this.outerSvg.style.fill = "none";
         svg.appendChild(this.outerSvg);
         
+        this.textPathSvg.setAttribute("id", this.name + "-textPath");
+        this.textPathSvg.setAttribute("d", textPath(this.x, this.y));
+        
+        defs.appendChild(this.textPathSvg);
+        
+        let textContentSvg = document.createElementNS("http://www.w3.org/2000/svg", 'textPath');
+        textContentSvg.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${this.name}-textPath`);
+        textContentSvg.innerHTML = "@" + this.name;
+        
+        let textSvg = document.createElementNS("http://www.w3.org/2000/svg", 'text');
+        textSvg.setAttribute("font-family", "sans-serif");
+        textSvg.setAttribute("font-size", "9");
+        textSvg.style.textShadow = "-1px -1px 0 white, 1px 1px 0 white, -1px 1px 0 white, 1px -1px 0 white";
+        textSvg.appendChild(textContentSvg);
+        
+        svg.appendChild(textSvg);
+        
         this.appearStep(svg);
     }
 }
@@ -166,25 +193,23 @@ class Edge {
         const sourceSvg = document.getElementById(this.source);
         const targetSvg = document.getElementById(this.target);
         
-        const x1 = sourceSvg.getAttribute("cx");
-        const y1 = sourceSvg.getAttribute("cy");
-        const x2 = targetSvg.getAttribute("cx"); // TODO: REMOVE
-        const y2 = targetSvg.getAttribute("cy"); // TODO: REMOVE
+        const x1 = parseInt(sourceSvg.getAttribute("cx"));
+        const y1 = parseInt(sourceSvg.getAttribute("cy"));
+        const x2 = parseInt(targetSvg.getAttribute("cx")); // TODO: REMOVE
+        const y2 = parseInt(targetSvg.getAttribute("cy")); // TODO: REMOVE
         
         const suffix = `${this.source}-${this.target}`;
         
         const linkSvg = this.linkSvg;
-        var linkSvgName = `link-${suffix}`;
+        const linkSvgName = `link-${suffix}`;
         linkSvg.setAttribute("id", linkSvgName);
-        linkSvg.setAttribute("x1", x1);
-        linkSvg.setAttribute("y1", y1);
-        linkSvg.setAttribute("x2", x2);
-        linkSvg.setAttribute("y2", y2);
+        linkSvg.setAttribute("d", bezier(x1,y1,x2,y2));
         linkSvg.setAttribute("stroke", "black");
         linkSvg.setAttribute("stroke-width", "2");
         linkSvg.setAttribute("fill", "transparent");
         linkSvg.setAttribute("stroke-dasharray", "100% 100%");
         linkSvg.setAttribute("stroke-dashoffset", "100%");
+        linkSvg.setAttribute("marker-end", "url(#arrowhead)");
         svg.appendChild(linkSvg);
         
         this.surgeStep(sourceSvg, targetSvg, svg)
@@ -316,11 +341,13 @@ class Graph {
           const node = nodeEntry[1];
           const svg = node.svg;
           const fillSvg = node.fillSvg;
+          const textPathSvg = node.textPathSvg;
           
           if (svg == undefined) {
               continue;
           }
           
+          textPathSvg.setAttribute("d", textPath(node.x, node.y));
           fillSvg.setAttribute("x", node.x-24);
           fillSvg.setAttribute("y", node.y-24);
           svg.setAttribute("cx", node.x);
