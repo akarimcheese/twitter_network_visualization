@@ -5,8 +5,8 @@ authors:
   - Ayman Karim <akarim1@terpmail.umd.edu>
 
 targets:
-  server:
-    main: src/server.cr
+  twitter_network_visualization:
+    main: src/twitter_network_visualization.cr
     
 dependencies:
   kemal:
