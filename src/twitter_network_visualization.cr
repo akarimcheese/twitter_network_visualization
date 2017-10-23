@@ -1,5 +1,3 @@
-require "./twitter_network_example/*"
-
 require "kemal"
 require "twitter_networks"
 
