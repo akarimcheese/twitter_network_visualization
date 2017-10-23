@@ -7,7 +7,8 @@ Currently supports drawing Twitter networks as force-directed or circular graphs
 This project was made to demonstrate how the [twitter_networks](https://github.com/akarimcheese/twitter_networks) library could be used and to learn about SVG animations without d3.js
 
 ![Imgur](https://i.imgur.com/2G4BQ1L.gif)
-Check it out [here](https://twitterviz.herokuapp.com)
+
+Check out the app live in action [here](https://twitterviz.herokuapp.com)
 
 ## Usage
 Run
@@ -22,9 +23,6 @@ Make sure you have environment variables:
 
 Go to the homepage (e.g. `localhost:8080/`) and click on the "Sign in with Twitter" button. Authenticate yourself, and then you can add users and mess with the graph configurations.
 
-![Imgur](https://i.imgur.com/NxGUaTF.gif)
-![Imgur](https://i.imgur.com/dE2N66N.gif)
-
 ## Development
 
 Planned work and progress is documented in the tasks.md file. Feel free to contribute, provide feedback, or add tasks/issues.
@@ -36,3 +34,9 @@ Planned work and progress is documented in the tasks.md file. Feel free to contr
 3. Commit your changes (git commit -am 'Add some feature')
 4. Push to the branch (git push origin my-new-feature)
 5. Create a new Pull Request
+
+# Demo
+### Adding Users
+![Imgur](https://i.imgur.com/dE2N66N.gif)
+### Using the Circlular Layout
+![Imgur](https://i.imgur.com/NxGUaTF.gif)
