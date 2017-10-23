@@ -1,10 +1,6 @@
-# twitter_network_example
+# Twitter Network Visualiation
 
-TODO: Write a description here
-
-## Installation
-
-TODO: Write installation instructions here
+Web application to draw Twitter network graphs. Backend written in Crystal.
 
 ## Usage
 
@@ -16,12 +12,13 @@ TODO: Write development instructions here
 
 ## Contributing
 
-1. Fork it ( https://github.com/[your-github-name]/twitter_network_example/fork )
+1. Fork it ( https://github.com/akarimcheese/twitter_network_visualization/fork )
 2. Create your feature branch (git checkout -b my-new-feature)
 3. Commit your changes (git commit -am 'Add some feature')
 4. Push to the branch (git push origin my-new-feature)
 5. Create a new Pull Request
 
-## Contributors
+## Libraries Used
+- [crystweet](https://github.com/akarimcheese/crystweet)
+- [twitter_networks](https://github.com/akarimcheese/twitter_networks)
 
-- [[your-github-name]](https://github.com/[your-github-name]) Ayman Karim - creator, maintainer
