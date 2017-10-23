@@ -39,4 +39,5 @@ Planned work and progress is documented in the tasks.md file. Feel free to contr
 ### Adding Users
 ![Imgur](https://i.imgur.com/dE2N66N.gif)
 ### Using the Circlular Layout
-![Imgur](https://i.imgur.com/NxGUaTF.gif)
+[Gif too large for Github](https://i.imgur.com/NxGUaTF.gifv)
+
