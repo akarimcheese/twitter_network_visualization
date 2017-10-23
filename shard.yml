@@ -1,12 +1,12 @@
-name: twitter_network_example
+name: twitter_network_visualization
 version: 0.1.0
 
 authors:
   - Ayman Karim <akarim1@terpmail.umd.edu>
 
 targets:
-  twitter_network_example:
-    main: src/twitter_network_example.cr
+  server:
+    main: src/server.cr
     
 dependencies:
   kemal:
