@@ -39,10 +39,11 @@
             } else {
                 if (circle) {
                   twitter_network.startForces();
+                  circle = false;
                 } else {
                   twitter_network.startCircle();
+                  circle = true;
                 }
-                circle = !circle;
             }
         },10000);
       });
