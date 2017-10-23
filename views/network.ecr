@@ -10,11 +10,11 @@
     <script>
         
       $(document).ready(function() {
-        let twitter_network = new Graph(document.getElementsByTagName('svg')[0]);
-        twitter_network.startForces();
+        let twitterNetwork = new Graph(document.getElementsByTagName('svg')[0]);
+        twitterNetwork.startForces();
           
         // Open WebSocket connection
-        var ws = new WebSocket("wss://" + location.host + "/events");
+        let ws = new WebSocket("wss://" + location.host + "/events");
         // Append each message
         ws.onmessage = function(e) { 
             
@@ -24,15 +24,15 @@
             console.log(data);
             
             if (data.node) {
-                twitter_network.addNode(data.node, data.img);
+                twitterNetwork.addNode(data.node, data.img);
             } else if (data.source) {
-                twitter_network.addEdge(data.source, data.target);
+                twitterNetwork.addEdge(data.source, data.target);
             } else if (data.message) {
                 console.log(data.message);
             }
         };
         $("form").bind('submit', function(e) {
-          var message = $('#msg').val().trim();
+          let message = $('#msg').val().trim();
           ws.send(message);
           $('#msg').val(''); $('#msg').focus();
           e.preventDefault();
@@ -42,12 +42,41 @@
           websocket.close()
         };
         
+        $("#circleDrift").change(function() {
+          twitterNetwork.circleDrift = parseFloat(this.value)*(Math.PI/180);
+        });
+        
+        $("#nodeRepulsion").change(function() {
+          twitterNetwork.nodeRepulsionConstant = parseFloat(this.value);
+        });
+        
+        $("#wallRepulsion").change(function() {
+          twitterNetwork.nodeRepulsionConstant = parseFloat(this.value);
+        });
+        
+        $("#springForce").change(function() {
+          twitterNetwork.springConstant = parseFloat(this.value);
+        });
+        
+        $("#interfaceToggle").click(function() {
+          button = $("#interfaceToggle");
+          
+          if (button.html() == '-') {
+            $("#interfaceBody").hide();
+            button.html('+');
+          }
+          else if (button.html() == '+') {
+            $("#interfaceBody").show();
+            button.html('-');
+          }
+        });
+        
         $('input[type=radio][name=graphMode]').change(function () {
             if (this.value == 'circle') {
-                twitter_network.startCircle();
+                twitterNetwork.startCircle();
             }
             else if (this.value == 'force') {
-                twitter_network.startForces();
+                twitterNetwork.startForces();
             }
         });
       });
@@ -70,18 +99,32 @@
     </svg>
     
     <div id="interface">
-      <form>
-        <input id='msg' />
-        <input type="submit" value="Send">
-      </form>
-      <div id='graphMode'>
-        <h4>Graph Mode</h4>
-        <input type='radio' name='graphMode' value='force' checked>Force Directed<br>
-        <input type='radio' name='graphMode' value='circle'>Circle<br>
-      </div>
-      <div>
-        <h4>Websocket Logs</h4>
-        <pre id='websocketlog'></pre>
+      <button id="interfaceToggle">-</button>
+      <div id="interfaceBody">
+        <form>
+          <input id='msg' />
+          <input type="submit" value="Add User">
+        </form>
+        <div id='graphMode'>
+          <h4>Graph Mode</h4>
+          <input type='radio' name='graphMode' value='force' checked>Force Directed<br>
+          <input type='radio' name='graphMode' value='circle'>Circle<br>
+        </div>
+        <div id='config'>
+          <h4>Graph Configuration</h4>
+          <label>Circle Drift (in degrees)</label>
+          <input id="circleDrift" type="number" value="0.02"> <br>
+          <label>Node Repulsion</label> 
+          <input id="nodeRepulsion" type="number" value="50000"> <br>
+          <label>Wall Repulsion</label>
+          <input id="wallRepulsion" type="number" value="5000"> <br>
+          <label>Spring Force (links)</label>
+          <input id="springForce" type="number" value="0.01"> <br>
+        </div>
+        <div>
+          <h4>Websocket Logs</h4>
+          <pre id='websocketlog'></pre>
+        </div>
       </div>
     </div>
   </body>

@@ -55,10 +55,32 @@ body {
     border-bottom-width: 10px;
 }
 
+#config input {
+    margin-bottom: 1em;
+}
+
+#interfaceToggle {
+    width: 2em;
+    height: 2em;
+    text-align: center;
+    font-size: 9px;
+    
+    float: right;
+    clear: both;
+}
+
+#interfaceBody {
+    margin-top: 1em;
+    
+    font-family: sans-serif;
+}
+
 #interface {
     position: absolute;
     right: 0;
     top: 0;
+    
+    width: 15em;
     
     margin: 1em;
     padding: 1em;
@@ -69,6 +91,5 @@ body {
 
 pre {
     height: 5em;
-    width: 15em;
     overflow: scroll;
 }

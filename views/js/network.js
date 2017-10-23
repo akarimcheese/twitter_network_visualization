@@ -261,7 +261,7 @@ class Graph {
         // repulsions between nodes
         this.nodeRepulsionConstant = 50000.0;
         // repulsion between node and wall
-        this.wallRepulsionConstant = 5000;
+        this.wallRepulsionConstant = 5000.0;
         // spring force on edges/links/target positions
         this.springConstant = 0.01;
         
