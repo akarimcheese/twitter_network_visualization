@@ -14,19 +14,29 @@
  * ~~Clean up Surge SVG Animation~~
  * ~~Twitter OAuth Signin~~
  * ~~Front Page~~
- * Fix capitalization issues
- * Configurable force directed graphs
- * Different kind of visual graph structures
- * Factor out graph class
- * Better layout for network
 
 ## 10/21/2017
  * ~~Group SVG Elements~~
  * ~~Use Images~~
  * ~~Directed Edges~~
  * ~~Arrows for direction~~
- * On Highlight show name
  * ~~Display handle~~
+
+## 10/22/2017
+ * ~~On reload reprovide images~~
+ * ~~Add forces from walls~~
+ * ~~Better Bezier Curves for Arrows~~
+ * ~~Circle Structure~~
+ * ~~Handle whitespace~~
+ * ~~Fix capitalization issues~~
+ * ~~Configurable force directed graphs~~
+
+## TODO
+ * Different kind of visual graph structures
+ * Better layout for network
+ * Delete Users
+ * Fix arrowheads on really short paths
+ * Handle duplicate names
  * Message on Rate Limit
  * Better UI
  * Smoother Animations 
@@ -36,13 +46,3 @@
    * Make bigger and highlight links
    * Show follow/follow back list
    * Fade background, other users
-
-## 10/22/2017
- * ~~On reload reprovide images~~
- * ~~Add forces from walls~~
- * ~~Better Bezier Curves for Arrows~~
- * ~~Circle Structure~~
- * Handle duplicate names
- * ~~Handle whitespace~~
- * Delete Users
- * Fix arrowheads on really short paths
