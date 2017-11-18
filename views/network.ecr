@@ -7,8 +7,7 @@
     <script src="https://code.jquery.com/jquery-1.11.3.js"></script>
     <script src="js/network.js"></script>
     
-    <script>
-        
+    <script> 
       $(document).ready(function() {
         let twitterNetwork = new Graph(document.getElementsByTagName('svg')[0]);
         twitterNetwork.startForces();
@@ -58,6 +57,10 @@
           twitterNetwork.springConstant = parseFloat(this.value);
         });
         
+        $("#springLength").change(function() {
+          twitterNetwork.springLength = parseFloat(this.value);
+        });
+        
         $("#interfaceToggle").click(function() {
           button = $("#interfaceToggle");
           
@@ -97,7 +100,6 @@
         <g id="edges"></g>
         <g id="nodes"></g>
     </svg>
-    
     <div id="interface">
       <button id="interfaceToggle">-</button>
       <div id="interfaceBody">
@@ -118,8 +120,10 @@
           <input id="nodeRepulsion" type="number" value="50000"> <br>
           <label>Wall Repulsion</label>
           <input id="wallRepulsion" type="number" value="5000"> <br>
-          <label>Spring Force (links)</label>
+          <label>Spring Force</label>
           <input id="springForce" type="number" value="0.01"> <br>
+          <label>Spring Length</label>
+          <input id="springLength" type="number" value=""> <br>
         </div>
         <div>
           <h4>Websocket Logs</h4>

@@ -264,6 +264,8 @@ class Graph {
         this.wallRepulsionConstant = 5000.0;
         // spring force on edges/links/target positions
         this.springConstant = 0.01;
+        // Ideal edge length
+        this.springLength = null;
         
         this.addNode = this.addNode.bind(this);
         this.addEdge = this.addEdge.bind(this);
@@ -341,7 +343,7 @@ class Graph {
             // Add to offset
             this.circleOffset += this.circleDrift;
             this.draw();
-            setTimeout(this.applyCircle, 10);
+            window.requestAnimationFrame(this.applyCircle);
         }
     }
     
@@ -357,7 +359,7 @@ class Graph {
             // Repulsion
             this.applyCoulombsLaw();
             this.draw();
-            setTimeout(this.applyForces, 25);
+            window.requestAnimationFrame(this.applyForces);
         }
     }
     
@@ -366,7 +368,7 @@ class Graph {
         // Experimented to get this value. We want the ideal distance between
         // nodes to decrease as we add more nodes to the graph. Open to changing this
         // value or setting it to be configurable.
-        const ideal = Math.max(this.width, this.height) * (1.0/Math.log2(this.nodes.size));
+        const ideal = this.springLength || Math.max(this.width, this.height) * (1.0/Math.log2(this.nodes.size));
         const epsilon = 0.5;
         
         for (const edgeEntry of this.edges.entries()) {
