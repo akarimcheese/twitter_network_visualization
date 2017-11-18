@@ -111,7 +111,7 @@ class Node {
         }
         
         // Repeat step if appearance isn't complete
-        setTimeout(() => {this.appearStep(svg)}, 1);
+        window.requestAnimationFrame(() => {this.appearStep(svg)});
     }
     
     appear(svg, img) {
@@ -206,7 +206,7 @@ class Edge {
             // Show little bit more of the path
             linkSvg.setAttribute("stroke-dashoffset", `${(1-this.surgeProgress)*100}%`);
              
-            setTimeout(() => { this.surgeStep(sourceSvg, targetSvg, svg); }, 5);
+            window.requestAnimationFrame(() => { this.surgeStep(sourceSvg, targetSvg, svg); });
         } 
     }
     
