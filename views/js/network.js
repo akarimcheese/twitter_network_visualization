@@ -343,7 +343,7 @@ class Graph {
             // Add to offset
             this.circleOffset += this.circleDrift;
             this.draw();
-            window.requestAnimationFrame(this.applyCircle);
+            setTimeout(this.applyCircle, 10);
         }
     }
     
@@ -359,7 +359,7 @@ class Graph {
             // Repulsion
             this.applyCoulombsLaw();
             this.draw();
-            window.requestAnimationFrame(this.applyForces);
+            setTimeout(this.applyForces, 25);
         }
     }
     
