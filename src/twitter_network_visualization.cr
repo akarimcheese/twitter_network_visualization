@@ -110,7 +110,7 @@ module TwitterNetworkExample
       oauth_token, oauth_verifier = auth_params["oauth_token"], auth_params["oauth_verifier"]
       # Get the access token from the OAuth callback params
       access_token = auth_client.oauth_access_token(oauth_token, oauth_verifier)
-      session_id = SecureRandom.hex
+      session_id = Random::Secure.hex
       
       # Set a session cookie
       ctx.response.cookies["session"] = HTTP::Cookie.new("session", session_id, "/", Time.now + 12.hours, nil, true)

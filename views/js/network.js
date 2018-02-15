@@ -4,6 +4,40 @@ function textPath(x, y) {
 }
 
 // Return path instructions
+function straightLine(x1, y1, x2, y2) {
+    let diffx = x2-x1;
+    let diffy = y2-y1;
+    let distance = Math.sqrt(diffx*diffx + diffy*diffy);
+    
+    let unitx = 0;
+    let unity = 0;
+    
+    if (distance > 0) {
+        unitx = diffx/distance;
+        unity = diffy/distance;
+    }
+    
+    // Want the anchors to be 10 degrees off the direct path
+    let theta1 = Math.PI * (10.0/180.0);
+    let theta2 = Math.PI * (170.0/180.0);
+  
+    // Path starts 40px off center
+    let newx1 = x1 + Math.cos(theta1)*unitx*40 - Math.sin(theta1)*unity*40;
+    let newy1 = y1 + Math.sin(theta1)*unitx*40 + Math.cos(theta1)*unity*40;
+    // Path ends 60px off center, to  leave room for the arrowhead
+    let newx2 = x2 + Math.cos(theta2)*unitx*60 - Math.sin(theta2)*unity*60;
+    let newy2 = y2 + Math.sin(theta2)*unitx*60 + Math.cos(theta2)*unity*60;
+    
+    // Get coordinate strings
+    let coords1 = `${Math.round(newx1)} ${Math.round(newy1)}`;
+    let coords2 = `${Math.round(newx2)} ${Math.round(newy2)}`;
+    
+    // Path instructions
+    return `M${coords1} L ${coords2}`
+}
+
+
+// Return path instructions
 function bezier(x1, y1, x2, y2) {
     let diffx = x2-x1;
     let diffy = y2-y1;
@@ -200,7 +234,7 @@ class Edge {
     
     surgeStep(sourceSvg, targetSvg, svg) {
         if (this.surgeProgress < 1) {
-            this.surgeProgress += 0.01;
+            this.surgeProgress += 0.05;
             
             const linkSvg = this.linkSvg;
             // Show little bit more of the path
@@ -266,6 +300,8 @@ class Graph {
         this.springConstant = 0.01;
         // Ideal edge length
         this.springLength = null;
+        // Curved or straight line
+        this.curvedLines = true;
         
         this.addNode = this.addNode.bind(this);
         this.addEdge = this.addEdge.bind(this);
@@ -483,7 +519,11 @@ class Graph {
                 const x2 = targetNode.x;
                 const y2 = targetNode.y;
                 
-                linkSvg.setAttribute("d", bezier(x1,y1,x2,y2));
+                if (this.curvedLines) {
+                    linkSvg.setAttribute("d", bezier(x1,y1,x2,y2));
+                } else {
+                    linkSvg.setAttribute("d", straightLine(x1,y1,x2,y2));
+                }
             }
         }
     }

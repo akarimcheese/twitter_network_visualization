@@ -61,6 +61,10 @@
           twitterNetwork.springLength = parseFloat(this.value);
         });
         
+        $("#curvedLines").change(function() {
+          twitterNetwork.curvedLines = this.checked;
+        });
+        
         $("#interfaceToggle").click(function() {
           button = $("#interfaceToggle");
           
@@ -124,6 +128,8 @@
           <input id="springForce" type="number" value="0.01"> <br>
           <label>Spring Length</label>
           <input id="springLength" type="number" value=""> <br>
+          <label>Curved Lines</label>
+          <input id="curvedLines" type="checkbox" checked=true> <br>
         </div>
         <div>
           <h4>Websocket Logs</h4>
