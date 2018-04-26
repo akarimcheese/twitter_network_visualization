@@ -89,6 +89,29 @@ body {
     background-color: rgba(255, 255, 255, 0.75);
 }
 
+#networkContainer {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+
+#nodeContainer {
+  position: absolute;
+  margin: 0;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.node {
+    position: absolute;
+    margin: 0;
+    left: 0;
+    top: 0;
+}
+
 pre {
     height: 5em;
     overflow: scroll;
