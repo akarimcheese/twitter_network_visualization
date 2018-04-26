@@ -108,6 +108,7 @@ module TwitterNetworkExample
       # This endpoint should be reached by the Twitter OAuth callback with the oauth token and oauth verifier
       auth_params = ctx.request.query_params
       oauth_token, oauth_verifier = auth_params["oauth_token"], auth_params["oauth_verifier"]
+
       # Get the access token from the OAuth callback params
       access_token = auth_client.oauth_access_token(oauth_token, oauth_verifier)
       session_id = Random::Secure.hex

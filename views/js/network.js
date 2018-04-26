@@ -4,7 +4,7 @@ function textPath(x, y) {
 }
 
 // Return path instructions
-function straightLine(x1, y1, x2, y2) {
+function straightLine(x1, y1, x2, y2, padding) {
     let diffx = x2-x1;
     let diffy = y2-y1;
     let distance = Math.sqrt(diffx*diffx + diffy*diffy);
@@ -22,11 +22,11 @@ function straightLine(x1, y1, x2, y2) {
     let theta2 = Math.PI * (170.0/180.0);
   
     // Path starts 40px off center
-    let newx1 = x1 + Math.cos(theta1)*unitx*40 - Math.sin(theta1)*unity*40;
-    let newy1 = y1 + Math.sin(theta1)*unitx*40 + Math.cos(theta1)*unity*40;
+    let newx1 = x1 + Math.cos(theta1)*unitx*padding - Math.sin(theta1)*unity*padding;
+    let newy1 = y1 + Math.sin(theta1)*unitx*padding + Math.cos(theta1)*unity*padding;
     // Path ends 60px off center, to  leave room for the arrowhead
-    let newx2 = x2 + Math.cos(theta2)*unitx*60 - Math.sin(theta2)*unity*60;
-    let newy2 = y2 + Math.sin(theta2)*unitx*60 + Math.cos(theta2)*unity*60;
+    let newx2 = x2 + Math.cos(theta2)*unitx*(padding+20) - Math.sin(theta2)*unity*(padding+20);
+    let newy2 = y2 + Math.sin(theta2)*unitx*(padding+20) + Math.cos(theta2)*unity*(padding+20);
     
     // Get coordinate strings
     let coords1 = `${Math.round(newx1)} ${Math.round(newy1)}`;
@@ -38,7 +38,7 @@ function straightLine(x1, y1, x2, y2) {
 
 
 // Return path instructions
-function bezier(x1, y1, x2, y2) {
+function bezier(x1, y1, x2, y2, padding) {
     let diffx = x2-x1;
     let diffy = y2-y1;
     let distance = Math.sqrt(diffx*diffx + diffy*diffy);
@@ -55,12 +55,12 @@ function bezier(x1, y1, x2, y2) {
     let theta1 = Math.PI * (10.0/180.0);
     let theta2 = Math.PI * (170.0/180.0);
   
-    // Path starts 40px off center
-    let newx1 = x1 + Math.cos(theta1)*unitx*40 - Math.sin(theta1)*unity*40;
-    let newy1 = y1 + Math.sin(theta1)*unitx*40 + Math.cos(theta1)*unity*40;
+      // Path starts 40px off center
+    let newx1 = x1 + Math.cos(theta1)*unitx*padding - Math.sin(theta1)*unity*padding;
+    let newy1 = y1 + Math.sin(theta1)*unitx*padding + Math.cos(theta1)*unity*padding;
     // Path ends 60px off center, to  leave room for the arrowhead
-    let newx2 = x2 + Math.cos(theta2)*unitx*60 - Math.sin(theta2)*unity*60;
-    let newy2 = y2 + Math.sin(theta2)*unitx*60 + Math.cos(theta2)*unity*60;
+    let newx2 = x2 + Math.cos(theta2)*unitx*(padding+20) - Math.sin(theta2)*unity*(padding+20);
+    let newy2 = y2 + Math.sin(theta2)*unitx*(padding+20) + Math.cos(theta2)*unity*(padding+20);
     
     // Set anchor points
     let anchor1x = newx1 + Math.cos(theta1)*unitx*(distance-100)/3 - Math.sin(theta1)*unity*(distance-100)/3;
@@ -79,7 +79,7 @@ function bezier(x1, y1, x2, y2) {
 }
 
 class Node {
-    constructor(name, img, svg, nodeSvg) {
+    constructor(name, img, svg, nodeContainer) {
         // We want the bigger image for user highlighting... todo
         img = img.replace("normal", "bigger");
         
@@ -96,26 +96,33 @@ class Node {
         this.x = Math.random() * (svgWidth*0.8) + (svgWidth*0.1);
         this.y = Math.random() * (svgHeight*0.8) + (svgHeight*0.1);
         
+        this.radius = 24;
+        this.containerWidth = 80;
+        
         // Store progress of appearance animation
         this.appearProgress = 0.0;
         
-        // Main circle element
-        this.svg = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
+        // Main svg element
+        this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        // Circle Defs
+        this.defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+        // Circle element
+        this.circleSvg = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
         // Path for label text element
         this.textPathSvg = document.createElementNS("http://www.w3.org/2000/svg", 'path');
         // Pattern for user image to fill main circle
         this.fillSvg = document.createElementNS("http://www.w3.org/2000/svg", 'pattern');
         // Fancy circle for appearance animation
-        this.outerSvg = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
+        // this.outerSvg = document.createElementNS("http://www.w3.org/2000/svg", 'circle');
         
         this.appearStep = this.appearStep.bind(this);
         this.appear = this.appear.bind(this);
         
         // Cue appearance animation
-        this.appear(nodeSvg, img);
+        this.appear(nodeContainer, img);
     }
     
-    appearStep(svg) {
+    appearStep(nodeContainer) {
         // For first part of animation, grow the main circle
         if (this.appearProgress < 1) {
             this.appearProgress += 0.05;
@@ -123,11 +130,11 @@ class Node {
             let y = this.appearProgress * (this.appearProgress - 2) * -1;
             
             // Get the circle to eventually have radius of 24
-            this.svg.setAttribute("r", y*24);
-            this.outerSvg.setAttribute("r", y*24);
+            this.circleSvg.setAttribute("r", y*this.radius);
+            // this.outerSvg.setAttribute("r", y*24);
             
             // Second part of animation, make the outer circle grow and thin out
-        } else if(this.appearProgress < 2) {
+        } /* else if(this.appearProgress < 2) {
             this.appearProgress += 0.01;
 
             let y = (this.appearProgress - 1) * (this.appearProgress - 3) * -1;
@@ -139,65 +146,68 @@ class Node {
             this.outerSvg.setAttribute("stroke-width", 5 * width);
             
             // When the outer circle dissappears, remove it from outer SVG group
-        } else {
-            svg.removeChild(this.outerSvg);
+        } */ else {
+            // svg.removeChild(this.outerSvg);
             return;
         }
         
         // Repeat step if appearance isn't complete
-        setTimeout(() => {this.appearStep(svg)}, 1);
+        setTimeout(() => {this.appearStep(nodeContainer)}, 1);
     }
     
-    appear(svg, img) {
-        // Find defs tag
-        const defs = document.getElementsByTagNameNS("http://www.w3.org/2000/svg", "defs")[0];
-        
+    appear(nodeContainer, img) {
         const patternName = `fill-${this.name}`
         // Set pattern attributes
         this.fillSvg.setAttribute("id", patternName);
         this.fillSvg.setAttribute("patternUnits", "userSpaceOnUse");
-        this.fillSvg.setAttribute("width", 48);
-        this.fillSvg.setAttribute("height", 48);
+        this.fillSvg.setAttribute("width", this.radius*2);
+        this.fillSvg.setAttribute("height", this.radius*2);
+        this.fillSvg.setAttribute("x", 40-this.radius);
+        this.fillSvg.setAttribute("y", 40-this.radius);
         
         const imgSvg = document.createElementNS("http://www.w3.org/2000/svg", 'image');
         // Set image attributes
         imgSvg.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', img)
         imgSvg.setAttribute("x", 0);
         imgSvg.setAttribute("y", 0);
-        imgSvg.setAttribute("width", 48);
-        imgSvg.setAttribute("height", 48);
+        imgSvg.setAttribute("width", this.radius*2);
+        imgSvg.setAttribute("height", this.radius*2);
+        
+        this.imgSvg = imgSvg;
         
         // Add image to pattern
         this.fillSvg.appendChild(imgSvg);
         // Add pattern to defs
-        defs.appendChild(this.fillSvg);
+        this.defs.appendChild(this.fillSvg);
         
         // Set main circle attributes
-        this.svg.setAttribute("id", this.name);
-        this.svg.setAttribute("r", 0);
-        this.svg.setAttribute("cx", Math.round(this.x));
-        this.svg.setAttribute("cy", Math.round(this.y));
-        this.svg.setAttribute("stroke", "#f0f8ff");
-        this.svg.setAttribute("stroke-width", 2);
-        this.svg.setAttribute("fill", `url(#${patternName})`);
-        svg.appendChild(this.svg);
+        this.circleSvg.setAttribute("id", this.name);
+        this.circleSvg.setAttribute("r", 0);
+        this.circleSvg.setAttribute("cx", 40);
+        this.circleSvg.setAttribute("cy", 40);
+        this.circleSvg.setAttribute("stroke", "#f0f8ff");
+        this.circleSvg.setAttribute("stroke-width", 2);
+        this.circleSvg.setAttribute("fill", `url(#${patternName})`);
+        this.svg.appendChild(this.circleSvg);
         
+        /*
         // Set outer circle attributes
         this.outerSvg.setAttribute("id", this.name + "-outer");
-        this.outerSvg.setAttribute("cx", Math.round(this.x)); 
-        this.outerSvg.setAttribute("cy", Math.round(this.y)); 
+        // this.outerSvg.setAttribute("cx", Math.round(this.x)); 
+        // this.outerSvg.setAttribute("cy", Math.round(this.y)); 
         this.outerSvg.setAttribute("r","0"); 
         this.outerSvg.setAttribute("stroke", "#f0f8ff");
         this.outerSvg.setAttribute("stroke-width", 5);
         this.outerSvg.style.fill = "none";
         svg.appendChild(this.outerSvg);
+        */
         
         // Set path for the label text
         this.textPathSvg.setAttribute("id", this.name + "-textPath");
-        this.textPathSvg.setAttribute("d", textPath(this.x, this.y));
+        this.textPathSvg.setAttribute("d", textPath(40, 40));
         
         // Add path to defs
-        defs.appendChild(this.textPathSvg);
+        this.defs.appendChild(this.textPathSvg);
         
         const textContentSvg = document.createElementNS("http://www.w3.org/2000/svg", 'textPath');
         // Create the textPath svg element that has the text content and links to the path
@@ -211,9 +221,17 @@ class Node {
         textSvg.style.textShadow = "-1px -1px 0 white, 1px 1px 0 white, -1px 1px 0 white, 1px -1px 0 white";
         textSvg.appendChild(textContentSvg);
         
-        svg.appendChild(textSvg);
+        this.svg.appendChild(textSvg);
+        this.svg.appendChild(this.defs);
         
-        this.appearStep(svg);
+        this.svg.setAttribute("width", 80);
+        this.svg.setAttribute("height", 80);
+        this.svg.setAttribute('style', `transform:translate(${this.x - 40}px,${this.y - 40}px)`);
+        this.svg.classList.add('node');
+        
+        nodeContainer.appendChild(this.svg);
+        
+        this.appearStep(nodeContainer);
     }
 }
 
@@ -226,6 +244,8 @@ class Edge {
         
         this.surgeStep = this.surgeStep.bind(this);
         this.surge = this.surge.bind(this);
+        
+        this.padding = 40;
         
         // Track progress for initial surge animation
         this.surgeProgress = 0.0;
@@ -262,9 +282,9 @@ class Edge {
         const linkSvgName = `link-${suffix}`;
         linkSvg.setAttribute("id", linkSvgName);
         // Path instructions
-        linkSvg.setAttribute("d", bezier(x1,y1,x2,y2));
+        linkSvg.setAttribute("d", bezier(x1,y1,x2,y2,this.padding));
         linkSvg.setAttribute("stroke", "black");
-        linkSvg.setAttribute("stroke-width", "2");
+        linkSvg.setAttribute("stroke-width", "1.5");
         linkSvg.setAttribute("fill", "transparent");
         // Set up animation
         linkSvg.setAttribute("stroke-dasharray", "100% 100%");
@@ -278,13 +298,14 @@ class Edge {
 }
     
 class Graph {
-    constructor(svg) {
+    constructor(edgeContainer, nodeContainer) {
         this.nodes = new Map();
         this.edges = new Map();
-        this.svg = svg;
+        this.edgeSvg = document.getElementById(edgeContainer);
+        this.nodeDiv = document.getElementById(nodeContainer);
         
-        this.width = svg.getBBox().width;
-        this.height = svg.getBBox().height;
+        this.width = this.edgeSvg.getBBox().width;
+        this.height = this.edgeSvg.getBBox().height;
         
         /*-----Configs-----*/
         // circle or force
@@ -302,6 +323,8 @@ class Graph {
         this.springLength = null;
         // Curved or straight line
         this.curvedLines = true;
+        // Scale
+        this.scale = 1;
         
         this.addNode = this.addNode.bind(this);
         this.addEdge = this.addEdge.bind(this);
@@ -317,9 +340,12 @@ class Graph {
         this.draw = this.draw.bind(this);
     }
     
+    set nodeRadius(r) {
+        this.scale = r/25;
+    }
+    
     addNode(name, img) {
-        let nodeSvg = document.getElementById("nodes");
-        let node = new Node(name, img, this.svg, nodeSvg);
+        let node = new Node(name, img, this.edgeSvg, this.nodeDiv);
         // Lowercase because user input may not match actual username
         this.nodes.set(name.toLowerCase(), node);
         this.edges.set(name.toLowerCase(), []);
@@ -490,24 +516,22 @@ class Graph {
         for (const nodeEntry of this.nodes.entries()) {
           const node = nodeEntry[1];
           const svg = node.svg;
-          const fillSvg = node.fillSvg;
-          const textPathSvg = node.textPathSvg;
           
           if (svg == undefined) {
               continue;
           }
           
-          textPathSvg.setAttribute("d", textPath(node.x, node.y));
-          fillSvg.setAttribute("x", Math.round(node.x-24));
-          fillSvg.setAttribute("y", Math.round(node.y-24));
-          svg.setAttribute("cx", Math.round(node.x));
-          svg.setAttribute("cy", Math.round(node.y));
+          // fillSvg.setAttribute("x", Math.round(node.x-24));
+          // fillSvg.setAttribute("y", Math.round(node.y-24));
+          svg.setAttribute("style", `transform:translate(${Math.round(node.x-node.containerWidth/2)}px,${Math.round(node.y-node.containerWidth/2)}px) scale(${this.scale})`);
         }
 
         for (const edgeEntry of this.edges.entries()) {
             const sourceName = edgeEntry[0];
             const sourceNode = this.nodes.get(sourceName);
             const sourceEdges = edgeEntry[1];
+            
+            const padding = (35*this.scale) + 5;
             
             for (const edge of sourceEdges) {
                 const targetName = edge.target;
@@ -520,9 +544,9 @@ class Graph {
                 const y2 = targetNode.y;
                 
                 if (this.curvedLines) {
-                    linkSvg.setAttribute("d", bezier(x1,y1,x2,y2));
+                    linkSvg.setAttribute("d", bezier(x1,y1,x2,y2,padding));
                 } else {
-                    linkSvg.setAttribute("d", straightLine(x1,y1,x2,y2));
+                    linkSvg.setAttribute("d", straightLine(x1,y1,x2,y2,padding));
                 }
             }
         }
